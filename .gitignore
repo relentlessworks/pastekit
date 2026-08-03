@@ -1,0 +1,5 @@
+/pastekit
+*.json
+*.db
+*.db-wal
+*.db-shm

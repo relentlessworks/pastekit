@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>pastekit — agentic-first pastebin</title>
+<style>
+:root {
+  --bg: #0d1117;
+  --surface: #161b22;
+  --border: #30363d;
+  --text: #e6edf3;
+  --muted: #8b949e;
+  --accent: #58a6ff;
+  --green: #3fb950;
+  --orange: #d29922;
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.6;
+}
+.container { max-width: 900px; margin: 0 auto; padding: 0 20px; }
+header { border-bottom: 1px solid var(--border); padding: 20px 0; }
+header .container { display: flex; align-items: center; justify-content: space-between; }
+header h1 { font-size: 1.5rem; }
+header h1 a { color: var(--text); text-decoration: none; }
+.badges { display: flex; gap: 8px; }
+.badge { font-size: 0.75rem; padding: 2px 8px; border-radius: 12px; border: 1px solid var(--border); color: var(--muted); }
+.hero { padding: 60px 0 40px; text-align: center; }
+.hero h2 { font-size: 2.5rem; margin-bottom: 16px; }
+.hero p { color: var(--muted); font-size: 1.2rem; max-width: 600px; margin: 0 auto 24px; }
+.hero .cta { display: flex; gap: 12px; justify-content: center; }
+.hero .cta a { padding: 10px 24px; border-radius: 8px; text-decoration: none; font-weight: 600; }
+.hero .cta .primary { background: var(--accent); color: var(--bg); }
+.hero .cta .secondary { border: 1px solid var(--border); color: var(--text); }
+section { padding: 40px 0; border-top: 1px solid var(--border); }
+section h3 { font-size: 1.5rem; margin-bottom: 20px; }
+.principles { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 16px; }
+.principle { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 16px; }
+.principle h4 { color: var(--accent); margin-bottom: 8px; font-size: 1rem; }
+.principle p { color: var(--muted); font-size: 0.9rem; }
+pre { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 16px; overflow-x: auto; }
+code { font-family: 'SF Mono', Consolas, monospace; font-size: 0.9rem; }
+.config-table { width: 100%; border-collapse: collapse; }
+.config-table th, .config-table td { padding: 8px 12px; border-bottom: 1px solid var(--border); text-align: left; }
+.config-table th { color: var(--accent); }
+.config-table td { color: var(--muted); }
+footer { border-top: 1px solid var(--border); padding: 20px 0; text-align: center; color: var(--muted); font-size: 0.85rem; }
+@media (max-width: 600px) {
+  .hero h2 { font-size: 1.8rem; }
+  .hero .cta { flex-direction: column; }
+}
+</style>
+</head>
+<body>
+<header>
+<div class="container">
+<h1><a href="https://github.com/relentlessworks/pastekit">pastekit</a></h1>
+<div class="badges">
+<span class="badge">Go</span>
+<span class="badge">MIT</span>
+<span class="badge">v0.1.0</span>
+</div>
+</div>
+</header>
+<div class="hero">
+<div class="container">
+<h2>Agentic-First Pastebin</h2>
+<p>Share text snippets, code, logs, and configs. Get a short handle back. Plain text API, agent-driven, single Go binary.</p>
+<div class="cta">
+<a class="primary" href="https://github.com/relentlessworks/pastekit">View on GitHub</a>
+<a class="secondary" href="https://github.com/relentlessworks/pastekit#quick-start">Quick Start</a>
+</div>
+</div>
+</div>
+<div class="container">
+<section>
+<h3>Principles</h3>
+<div class="principles">
+<div class="principle"><h4>Agent IS the Interface</h4><p>No UI, no SDK. The AI agent is the user. The API is the product.</p></div>
+<div class="principle"><h4>Plain Text by Default</h4><p>One labeled, grepable line per record. Token-cheap. JSON on demand.</p></div>
+<div class="principle"><h4>Instructive Errors</h4><p>Every 4xx includes a hint telling the agent what to do next.</p></div>
+<div class="principle"><h4>Self-Documenting</h4><p>GET /help returns a one-page operating manual the agent loads at runtime.</p></div>
+<div class="principle"><h4>Simple Auth</h4><p>OTP via email → long-lived bearer token. No complex OAuth.</p></div>
+<div class="principle"><h4>Single Binary</h4><p>Go + JSON file storage. Zero external dependencies. Deploys as one file.</p></div>
+<div class="principle"><h4>Multi-Tenant</h4><p>Workspaces isolate data per tenant. Plans, limits, audit logs built in.</p></div>
+<div class="principle"><h4>MCP Connector</h4><p>Speaks Model Context Protocol at /mcp for chat client integrations.</p></div>
+<div class="principle"><h4>Short Handles</h4><p>Every paste is addressed by a short handle like paste_a1b2c.</p></div>
+</div>
+</section>
+<section>
+<h3>Quick Start</h3>
+<pre><code># Build
+make build
+
+# Run (defaults to :8470)
+./pastekit
+
+# Create a paste
+curl -X POST http://localhost:8470/pastes \
+  -H "Authorization: Bearer &lt;token&gt;" \
+  -d "content=Hello, world!&amp;visibility=public"
+
+# Get a paste
+curl http://localhost:8470/pastes/paste_abc12</code></pre>
+</section>
+<section>
+<h3>Configuration</h3>
+<table class="config-table">
+<tr><th>Flag</th><th>Env</th><th>Default</th><th>Description</th></tr>
+<tr><td>-addr</td><td>PASTEKIT_ADDR</td><td>:8470</td><td>Listen address</td></tr>
+<tr><td>-db</td><td>PASTEKIT_DB</td><td>pastekit.json</td><td>JSON storage file</td></tr>
+<tr><td>-secret</td><td>PASTEKIT_SECRET</td><td>(auto)</td><td>Token signing secret</td></tr>
+<tr><td>-smtp-host</td><td>PASTEKIT_SMTP_HOST</td><td>(empty)</td><td>SMTP server host</td></tr>
+<tr><td>-smtp-port</td><td>PASTEKIT_SMTP_PORT</td><td>587</td><td>SMTP server port</td></tr>
+</table>
+</section>
+<section>
+<h3>Build</h3>
+<pre><code>make build    # CGO_ENABLED=0, static binary
+make test     # go test -race
+make vet      # go vet</code></pre>
+</section>
+</div>
+<footer>
+<div class="container">
+<p>relentlessworks — agentic-first services for AI, not for humans.</p>
+</div>
+</footer>
+</body>
+</html>
