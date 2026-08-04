@@ -5,21 +5,43 @@ on:
     branches: [main]
     paths:
       - 'docs/**'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: deploy-pages
+  cancel-in-progress: true
 
 jobs:
   deploy:
+    name: Deploy to GitHub Pages
     runs-on: ubuntu-latest
-    permissions:
-      contents: write
     steps:
       - uses: actions/checkout@v4
-      - name: Deploy to gh-pages
+        with:
+          fetch-depth: 0
+
+      - name: Deploy docs to gh-pages branch
         run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git config user.name "Relentless"
+          git config user.email "noreply@relentlessworks.com"
+
+          # Save docs content to temp dir
+          cp -r docs /tmp/docs-content
+
+          # Create or reset gh-pages orphan branch
           git checkout --orphan gh-pages
-          git rm -rf .
-          cp -r docs/* .
+          git reset --hard
+
+          # Copy docs content to root
+          cp -r /tmp/docs-content/. .
+
+          # Clean up any leftover non-docs files
+          rm -rf .github cmd internal dist
+
+          # Commit and force-push to gh-pages
           git add .
-          git commit -m "Deploy pages"
+          git commit -m "deploy: update GitHub Pages [skip ci]"
           git push origin gh-pages --force
